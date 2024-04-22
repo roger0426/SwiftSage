@@ -16,7 +16,7 @@ import openai
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 import logging
-from logging import INFO, WARN
+from logging import INFO, WARNㄌ
 
 def clean(s):
     clean_toks = ['\n', '\t']
@@ -41,8 +41,9 @@ def llm_gpt(prompt, stop=["\n"], model_name="gpt-3.5-turbo"):
             )
             text = response["choices"][0]["message"]["content"]
             # dumb way to do this
-            if len(text.strip()) >= 5:
-                return response["choices"][0]["message"]["content"]
+            # ScienceWorld only accept int-like input for 'Ambiguous request' multiple choice questions.
+            if len(text.strip()) >= 5 or (len(text.strip()) >= 0 and text.strip().isdigit()):
+                return text
             cur_try += 1
         return ""
     except Exception as e:
